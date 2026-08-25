@@ -2,6 +2,7 @@
    Lumina Edit Pro - Responsive Viewport Adjustments
    ========================================================================== */
 
+/* ── 900px — Tablets & small laptops ─────────────────────────────────────── */
 @media (max-width: 900px) {
   :root {
     --right-panel-width: 280px;
@@ -21,47 +22,355 @@
   }
 }
 
+/* ── 768px — Mobile landscape / small tablets ────────────────────────────── */
 @media (max-width: 768px) {
+
+  /* Stack layout vertically instead of 3-column */
   .workspace-body {
     flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - var(--header-height) - var(--footer-height));
   }
 
+  /* ── Left sidebar becomes a horizontal top strip ── */
   .left-sidebar {
     width: 100%;
     height: 52px;
+    min-height: 52px;
+    flex-direction: row;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
     padding-top: 0;
+    padding: 0 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .tool-nav {
     flex-direction: row;
     justify-content: space-around;
-    height: 100%;
     align-items: center;
+    width: 100%;
+    height: 100%;
     padding: 0 4px;
+    gap: 4px;
   }
 
   .tool-tab {
     flex-direction: row;
     padding: 6px 10px;
     width: auto;
+    flex: 1;
+    justify-content: center;
+    gap: 5px;
+    font-size: 11px;
+    min-width: 0;
+  }
+
+  .tool-tab span {
+    display: none; /* Hide text labels on mobile, show only icons */
+  }
+
+  /* ── Canvas area: fills remaining height ── */
+  .canvas-container {
+    min-height: 250px;
+    flex: 1;
+  }
+
+  /* ── Right sidebar becomes a horizontal bottom panel ── */
+  .right-sidebar {
+    width: 100%;
+    height: 260px;
+    min-height: 260px;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  /* ── Header: hide button text labels, keep only icons ── */
+  .btn-text {
+    display: none;
+  }
+
+  /* Tighten button padding when text is hidden */
+  label[for="image-input"].btn,
+  #sample-images-btn,
+  #export-modal-btn {
+    padding: 7px 10px;
+    gap: 0;
+  }
+
+  /* Keep header actions from overflowing */
+  .header-actions {
+    gap: 4px;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* Hide dividers on mobile to save space */
+  .header-actions .divider {
+    display: none;
+  }
+
+  /* Modal full width on mobile */
+  .modal-card {
+    width: 95vw;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  /* History drawer full width */
+  .history-drawer {
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+
+  /* Footer: hide secondary info */
+  #status-dim {
+    display: none;
+  }
+
+  /* Zoom controls: wrap better */
+  .zoom-controls {
+    gap: 4px;
+  }
+
+  /* Chip grids wrap on mobile */
+  .chip-grid {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+/* ── 480px — Small Android phones ────────────────────────────────────────── */
+@media (max-width: 480px) {
+  :root {
+    --header-height: 50px;
+    --footer-height: 28px;
+  }
+
+  /* Header: even tighter */
+  .app-header {
+    padding: 0 8px;
+  }
+
+  .brand {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .brand-title {
+    font-size: 13px;
+  }
+
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Hide Undo / Redo / Compare on tiny phones */
+  #undo-btn,
+  #redo-btn,
+  #compare-btn {
+    display: none;
+  }
+
+  /* Right sidebar panel shorter on small phones */
+  .right-sidebar {
+    height: 230px;
+    min-height: 230px;
+  }
+
+  /* Make sliders easier to tap */
+  input[type="range"] {
+    height: 6px;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Panel scroll areas: let them scroll naturally */
+  .scroll-area {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Export modal body: more padding-friendly */
+  .modal-body {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  /* KB chips wrap */
+  .chip-grid {
+    gap: 5px;
+  }
+
+  .chip {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  /* Buttons in right panel full-width */
+  .btn-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .btn-row .btn {
+    flex: 1;
+    min-width: 70px;
+    justify-content: center;
+  }
+
+  /* Panel header compact */
+  .panel-header {
+    padding: 8px 12px;
+  }
+
+  .panel-header h3 {
+    font-size: 13px;
+  }
+
+  /* Group titles compact */
+  .group-title {
+    font-size: 11px;
+    padding: 8px 0 4px;
+  }
+
+  /* Control groups padding */
+  .control-group {
+    padding: 8px 12px;
+  }
+
+  /* Dropdown fixes on small screens */
+  .dropdown-menu {
+    width: 170px;
+    right: 0;
+    left: auto;
+  }
+}
+
+/* ── 360px — Very tiny Android phones ───────────────────────────────────── */
+@media (max-width: 360px) {
+  .app-header {
+    padding: 0 6px;
+  }
+
+  .brand-title {
+    font-size: 12px;
+  }
+
+  .logo-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Only show Export button in header */
+  label[for="image-input"].btn {
+    display: none;
+  }
+
+  /* Show a compact "Open" inside the right panel instead */
+  .right-sidebar {
+    height: 200px;
+    min-height: 200px;
+  }
+
+  .tool-tab {
+    padding: 4px 6px;
+  }
+}
+
+/* ── Landscape mode on phones ─────────────────────────────────────────────── */
+@media (max-width: 768px) and (orientation: landscape) {
+  .workspace-body {
+    flex-direction: row; /* Restore side-by-side in landscape */
+  }
+
+  .left-sidebar {
+    width: 52px;
+    height: 100%;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color);
+    border-bottom: none;
+    padding: 8px 4px;
+  }
+
+  .tool-nav {
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .tool-tab {
+    flex-direction: column;
+    width: 100%;
+    padding: 8px 0;
+    flex: initial;
   }
 
   .right-sidebar {
-    width: 100%;
-    height: 240px;
-    border-left: none;
-    border-top: 1px solid var(--border-color);
+    width: 220px;
+    height: 100%;
+    border-top: none;
+    border-left: 1px solid var(--border-color);
+  }
+}
+
+/* ── Touch & tap target improvements ─────────────────────────────────────── */
+@media (hover: none) and (pointer: coarse) {
+  /* All buttons: minimum 44x44 tap target (Apple HIG) */
+  .btn,
+  .btn-icon,
+  .btn-circle,
+  .tool-tab,
+  .dropdown-item,
+  .chip {
+    min-height: 40px;
   }
 
-  .modal-card {
-    width: 90%;
+  /* Remove hover effects on touch (prevents sticky hover) */
+  .btn:hover,
+  .btn-icon:hover,
+  .tool-tab:hover {
+    background: initial;
+    color: initial;
   }
 
-  .history-drawer {
-    right: 12px;
-    left: 12px;
-    width: auto;
+  .tool-tab.active:hover {
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--accent-primary);
+  }
+
+  /* Range inputs: taller thumb */
+  input[type="range"] {
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-color);
+    outline: none;
+    touch-action: pan-x;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.2);
+    box-shadow: 0 0 0 4px rgba(139,92,246,0.2);
   }
 }
