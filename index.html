@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Lumina Edit Pro - 100% Offline Photo & Passport Editor</title>
+  <meta name="description" content="Professional desktop & mobile photo editor with Passport size presets, exact KB file size compression, real-time adjustments, filters, and offline PWA/.EXE desktop capabilities.">
+  
+  <!-- PWA Manifest & Mobile Icons -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f111a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <!-- Styling -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+  <div id="app" class="app-container">
+    
+    <!-- Top Header Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 3v18M3 12h18"/>
+            <circle cx="12" cy="12" r="4" fill="url(#brand-grad)"/>
+            <defs>
+              <linearGradient id="brand-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#8b5cf6"/>
+                <stop offset="100%" stop-color="#06b6d4"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-title">Lumina <span>Edit Pro</span></div>
+        <span class="offline-badge"><span class="pulse-dot"></span> 100% Offline</span>
+      </div>
+
+      <!-- Quick Action Toolbar -->
+      <div class="header-actions">
+        <!-- Install PWA on Phone Button -->
+        <button class="btn btn-secondary hidden" id="install-pwa-btn" title="Install App on Android / Desktop">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Install App
+        </button>
+
+        <!-- File Operations -->
+        <label for="image-input" class="btn btn-secondary" title="Open image from computer or mobile (Ctrl+O)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Open Image
+        </label>
+        <input type="file" id="image-input" accept="image/*" style="display:none">
+
+        <!-- Sample Images Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-ghost" id="sample-images-btn" title="Try demo sample photos">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Samples
+          </button>
+          <div class="dropdown-menu" id="sample-menu">
+            <button class="dropdown-item" data-sample="sunset">🌅 Mountain Sunset</button>
+            <button class="dropdown-item" data-sample="cyberpunk">🌃 Cyberpunk City</button>
+            <button class="dropdown-item" data-sample="portrait">👤 Golden Hour Portrait</button>
+            <button class="dropdown-item" data-sample="abstract">🎨 Neon Fluid Abstract</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- History Controls -->
+        <button class="btn btn-icon" id="undo-btn" title="Undo (Ctrl+Z)" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+        </button>
+        <button class="btn btn-icon" id="redo-btn" title="Redo (Ctrl+Y)" disabled>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
+        </button>
+
+        <div class="divider"></div>
+
+        <!-- View Controls -->
+        <button class="btn btn-icon" id="compare-btn" title="Press & hold to compare original">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+        </button>
+
+        <div class="divider"></div>
+
+        <!-- Export -->
+        <button class="btn btn-primary" id="export-modal-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Photo
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="workspace-body">
+      
+      <!-- Left Vertical Tool Switcher -->
+      <aside class="left-sidebar">
+        <nav class="tool-nav">
+          <button class="tool-tab active" data-tab="adjust" title="Adjustments">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            <span>Adjust</span>
+          </button>
+          <button class="tool-tab" data-tab="crop" title="Crop & Passport Sizes">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>
+            <span>Passport & Size</span>
+          </button>
+          <button class="tool-tab" data-tab="filters" title="Preset Filters">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            <span>Filters</span>
+          </button>
+          <button class="tool-tab" data-tab="annotate" title="Draw & Annotate">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+            <span>Draw</span>
+          </button>
+          <button class="tool-tab" data-tab="text" title="Text Overlay">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            <span>Text</span>
+          </button>
+          <button class="tool-tab" data-tab="histogram" title="Histogram & EXIF">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>Info</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Center Canvas Viewport -->
+      <main class="canvas-viewport" id="viewport">
+        
+        <!-- Drag & Drop Overlay / Empty State -->
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-card">
+            <div class="dropzone-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#dz-grad)" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+                <defs>
+                  <linearGradient id="dz-grad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#8b5cf6"/>
+                    <stop offset="100%" stop-color="#06b6d4"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <h2>Drag & Drop your photo here</h2>
+            <p>Supports PNG, JPEG, WebP, GIF & SVG formats (100% Offline)</p>
+            <div class="dropzone-buttons">
+              <label for="image-input" class="btn btn-primary btn-lg">Choose File</label>
+              <button class="btn btn-secondary btn-lg" id="load-sample-quick">Try Sample Photo</button>
+            </div>
+            <div class="keyboard-hint">Or press <kbd>Ctrl</kbd> + <kbd>V</kbd> to paste from clipboard</div>
+          </div>
+        </div>
+
+        <!-- Interactive Canvas Container -->
+        <div class="canvas-container hidden" id="canvas-container">
+          
+          <!-- Main Output Display Canvas -->
+          <canvas id="main-canvas"></canvas>
+
+          <!-- Interactive Crop & Passport Overlay -->
+          <div class="crop-overlay hidden" id="crop-overlay">
+            <div class="crop-box" id="crop-box">
+              
+              <!-- Rule of Thirds Grid -->
+              <div class="crop-grid">
+                <div class="crop-line line-v1"></div>
+                <div class="crop-line line-v2"></div>
+                <div class="crop-line line-h1"></div>
+                <div class="crop-line line-h2"></div>
+              </div>
+
+              <!-- Passport Face Alignment Oval Guide -->
+              <div class="passport-face-guide hidden" id="passport-face-guide">
+                <div class="face-oval"></div>
+                <div class="eye-line"></div>
+                <div class="chin-line"></div>
+                <span class="guide-text">ALIGN FACE & CHIN</span>
+              </div>
+
+              <div class="crop-handle handle-nw" data-handle="nw"></div>
+              <div class="crop-handle handle-ne" data-handle="ne"></div>
+              <div class="crop-handle handle-sw" data-handle="sw"></div>
+              <div class="crop-handle handle-se" data-handle="se"></div>
+              <div class="crop-handle handle-n" data-handle="n"></div>
+              <div class="crop-handle handle-s" data-handle="s"></div>
+              <div class="crop-handle handle-w" data-handle="w"></div>
+              <div class="crop-handle handle-e" data-handle="e"></div>
+            </div>
+          </div>
+
+          <!-- Split Screen Compare Handle -->
+          <div class="compare-divider hidden" id="compare-divider">
+            <div class="compare-handle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Viewport Controls -->
+        <div class="viewport-controls hidden" id="viewport-controls">
+          <button class="btn-circle" id="zoom-out-btn" title="Zoom Out (-)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <span class="zoom-level" id="zoom-level-text">100%</span>
+          <button class="btn-circle" id="zoom-in-btn" title="Zoom In (+)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button class="btn-circle" id="zoom-fit-btn" title="Fit to Screen"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+          <button class="btn-circle" id="toggle-split-btn" title="Toggle Split Screen Compare"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg></button>
+        </div>
+
+      </main>
+
+      <!-- Right Inspector Panel (Contextual Tool Settings) -->
+      <aside class="right-sidebar">
+        
+        <!-- Tab 1: Adjustments Panel -->
+        <div class="tab-panel active" id="panel-adjust">
+          <div class="panel-header">
+            <h3>Light & Color Adjustments</h3>
+            <button class="btn-link" id="reset-adjust-btn">Reset</button>
+          </div>
+
+          <div class="scroll-area">
+            <!-- Light Section -->
+            <div class="control-group">
+              <div class="group-title">Light</div>
+              
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-brightness">Brightness</label>
+                  <input type="number" id="num-brightness" value="0" min="-100" max="100" class="slider-num">
+                </div>
+                <input type="range" id="adj-brightness" min="-100" max="100" value="0" data-param="brightness">
+              </div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-contrast">Contrast</label>
+                  <input type="number" id="num-contrast" value="0" min="-100" max="100" class="slider-num">
+                </div>
+                <input type="range" id="adj-contrast" min="-100" max="100" value="0" data-param="contrast">
+              </div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-exposure">Exposure</label>
+                  <input type="number" id="num-exposure" value="0" min="-100" max="100" class="slider-num">
+                </div>
+                <input type="range" id="adj-exposure" min="-100" max="100" value="0" data-param="exposure">
+              </div>
+            </div>
+
+            <!-- Color Section -->
+            <div class="control-group">
+              <div class="group-title">Color & Tone</div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-saturation">Saturation</label>
+                  <input type="number" id="num-saturation" value="0" min="-100" max="100" class="slider-num">
+                </div>
+                <input type="range" id="adj-saturation" min="-100" max="100" value="0" data-param="saturation">
+              </div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-vibrance">Vibrance</label>
+                  <input type="number" id="num-vibrance" value="0" min="-100" max="100" class="slider-num">
+                </div>
+                <input type="range" id="adj-vibrance" min="-100" max="100" value="0" data-param="vibrance">
+              </div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-warmth">Temperature / Warmth</label>
+                  <input type="number" id="num-warmth" value="0" min="-100" max="100" class="slider-num">
+                </div>
+                <input type="range" id="adj-warmth" min="-100" max="100" value="0" data-param="warmth">
+              </div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-tint">Tint (Green - Magenta)</label>
+                  <input type="number" id="num-tint" value="0" min="-100" max="100" class="slider-num">
+                </div>
+                <input type="range" id="adj-tint" min="-100" max="100" value="0" data-param="tint">
+              </div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-huerotate">Hue Shift</label>
+                  <input type="number" id="num-huerotate" value="0" min="-180" max="180" class="slider-num">
+                </div>
+                <input type="range" id="adj-huerotate" min="-180" max="180" value="0" data-param="hueRotate">
+              </div>
+            </div>
+
+            <!-- Details & Effects -->
+            <div class="control-group">
+              <div class="group-title">Details & Stylize</div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-sharpness">Sharpen</label>
+                  <input type="number" id="num-sharpness" value="0" min="0" max="100" class="slider-num">
+                </div>
+                <input type="range" id="adj-sharpness" min="0" max="100" value="0" data-param="sharpness">
+              </div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-blur">Soft Blur</label>
+                  <input type="number" id="num-blur" value="0" min="0" max="50" class="slider-num">
+                </div>
+                <input type="range" id="adj-blur" min="0" max="50" value="0" data-param="blur">
+              </div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-vignette">Vignette</label>
+                  <input type="number" id="num-vignette" value="0" min="0" max="100" class="slider-num">
+                </div>
+                <input type="range" id="adj-vignette" min="0" max="100" value="0" data-param="vignette">
+              </div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="adj-noise">Film Grain / Noise</label>
+                  <input type="number" id="num-noise" value="0" min="0" max="100" class="slider-num">
+                </div>
+                <input type="range" id="adj-noise" min="0" max="100" value="0" data-param="noise">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Passport Photo & Resizing Panel -->
+        <div class="tab-panel" id="panel-crop">
+          <div class="panel-header">
+            <h3>Passport Photo & Image Sizing</h3>
+          </div>
+          
+          <div class="scroll-area">
+            
+            <!-- Official Passport & Visa Presets -->
+            <div class="control-group">
+              <div class="group-title">Official Passport Presets</div>
+              <div class="chip-grid">
+                <button class="chip active" data-passport="us">🇺🇸 🇮🇳 US/India (2x2")</button>
+                <button class="chip" data-passport="uk">🇬🇧 🇪🇺 UK/EU (35x45mm)</button>
+                <button class="chip" data-passport="ca">🇨🇦 Canada (50x70mm)</button>
+                <button class="chip" data-passport="stamp">📌 Stamp/Visa (2x2.5")</button>
+              </div>
+
+              <!-- Face Alignment Overlay Switch -->
+              <div class="checkbox-row" style="margin-top: 10px;">
+                <label><input type="checkbox" id="toggle-face-guide" checked> Show Facial Position Guide</label>
+              </div>
+            </div>
+
+            <!-- Standard Aspect Ratios -->
+            <div class="control-group">
+              <div class="group-title">Aspect Ratios</div>
+              <div class="chip-grid">
+                <button class="chip" data-ratio="free">Free</button>
+                <button class="chip" data-ratio="1:1">1:1 Square</button>
+                <button class="chip" data-ratio="4:3">4:3 Standard</button>
+                <button class="chip" data-ratio="16:9">16:9 Wide</button>
+                <button class="chip" data-ratio="9:16">9:16 Story</button>
+                <button class="chip" data-ratio="3:2">3:2 Photo</button>
+              </div>
+            </div>
+
+            <!-- Custom Pixel / MM / Inch Resizer -->
+            <div class="control-group">
+              <div class="group-title">Custom Dimension Resizer</div>
+              
+              <div class="btn-row">
+                <div style="flex:1;">
+                  <label class="field-header">Width</label>
+                  <input type="number" id="custom-resize-w" class="custom-input" value="600" min="10">
+                </div>
+                <div style="flex:1;">
+                  <label class="field-header">Height</label>
+                  <input type="number" id="custom-resize-h" class="custom-input" value="600" min="10">
+                </div>
+              </div>
+
+              <div class="btn-row" style="margin-top: 8px;">
+                <div style="flex:1;">
+                  <label class="field-header">Unit</label>
+                  <select id="custom-resize-unit" class="custom-select">
+                    <option value="px">Pixels (px)</option>
+                    <option value="mm">Millimeters (mm)</option>
+                    <option value="in">Inches (in)</option>
+                  </select>
+                </div>
+                <div style="flex:1;">
+                  <label class="field-header">DPI Resolution</label>
+                  <select id="custom-resize-dpi" class="custom-select">
+                    <option value="300">300 DPI (Print/Passport)</option>
+                    <option value="150">150 DPI (Medium)</option>
+                    <option value="72">72 DPI (Web Screen)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="btn-row" style="margin-top: 12px;">
+                <button class="btn btn-primary" id="apply-crop-btn">Apply Sizing & Crop</button>
+                <button class="btn btn-secondary" id="cancel-crop-btn">Cancel</button>
+              </div>
+            </div>
+
+            <!-- Rotation & Flip -->
+            <div class="control-group">
+              <div class="group-title">Rotate & Flip</div>
+              <div class="btn-row">
+                <button class="btn btn-secondary" id="rotate-left-btn" title="Rotate 90° Left">-90°</button>
+                <button class="btn btn-secondary" id="rotate-right-btn" title="Rotate 90° Right">+90°</button>
+                <button class="btn btn-secondary" id="flip-h-btn" title="Flip Horizontal">⇄ Flip H</button>
+                <button class="btn btn-secondary" id="flip-v-btn" title="Flip Vertical">⇅ Flip V</button>
+              </div>
+
+              <div class="slider-field" style="margin-top: 12px;">
+                <div class="field-header">
+                  <label for="rotate-fine">Straighten Angle</label>
+                  <span id="rotate-fine-val">0°</span>
+                </div>
+                <input type="range" id="rotate-fine" min="-45" max="45" value="0">
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab 3: Preset Filters Panel -->
+        <div class="tab-panel" id="panel-filters">
+          <div class="panel-header">
+            <h3>Preset Styles & Look</h3>
+            <button class="btn-link" id="reset-filter-btn">Clear Filter</button>
+          </div>
+          
+          <div class="slider-field filter-intensity-wrap">
+            <div class="field-header">
+              <label for="filter-intensity">Filter Intensity</label>
+              <span id="filter-intensity-val">100%</span>
+            </div>
+            <input type="range" id="filter-intensity" min="0" max="100" value="100">
+          </div>
+
+          <div class="scroll-area">
+            <div class="filter-grid" id="filter-presets-grid">
+              <!-- Dynamically populated filter cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Draw & Annotate Panel -->
+        <div class="tab-panel" id="panel-annotate">
+          <div class="panel-header">
+            <h3>Brush & Painting</h3>
+            <button class="btn-link" id="clear-drawings-btn">Clear All</button>
+          </div>
+
+          <div class="scroll-area">
+            <div class="control-group">
+              <div class="group-title">Brush Mode</div>
+              <div class="btn-row">
+                <button class="btn btn-secondary active" id="brush-mode-draw">Brush</button>
+                <button class="btn btn-secondary" id="brush-mode-erase">Eraser</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="group-title">Color Palette</div>
+              <div class="color-picker-wrapper">
+                <input type="color" id="brush-color-picker" value="#8b5cf6" class="custom-color-input">
+                <div class="preset-colors">
+                  <span class="color-dot" style="background:#ffffff;" data-color="#ffffff"></span>
+                  <span class="color-dot" style="background:#000000;" data-color="#000000"></span>
+                  <span class="color-dot" style="background:#ef4444;" data-color="#ef4444"></span>
+                  <span class="color-dot" style="background:#f59e0b;" data-color="#f59e0b"></span>
+                  <span class="color-dot" style="background:#10b981;" data-color="#10b981"></span>
+                  <span class="color-dot" style="background:#06b6d4;" data-color="#06b6d4"></span>
+                  <span class="color-dot" style="background:#8b5cf6;" data-color="#8b5cf6"></span>
+                  <span class="color-dot" style="background:#ec4899;" data-color="#ec4899"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="brush-size">Stroke Size</label>
+                  <span id="brush-size-val">12px</span>
+                </div>
+                <input type="range" id="brush-size" min="1" max="100" value="12">
+              </div>
+
+              <div class="slider-field">
+                <div class="field-header">
+                  <label for="brush-opacity">Opacity</label>
+                  <span id="brush-opacity-val">100%</span>
+                </div>
+                <input type="range" id="brush-opacity" min="5" max="100" value="100">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 5: Text Overlay Panel -->
+        <div class="tab-panel" id="panel-text">
+          <div class="panel-header">
+            <h3>Add Text Label</h3>
+          </div>
+
+          <div class="scroll-area">
+            <div class="control-group">
+              <label for="text-input-content" class="group-title">Text Content</label>
+              <textarea id="text-input-content" rows="2" placeholder="Type text to place on photo..." class="custom-textarea">Lumina Edit</textarea>
+              <button class="btn btn-primary" id="add-text-btn" style="margin-top: 8px; width: 100%;">+ Add Text to Canvas</button>
+            </div>
+
+            <div class="control-group">
+              <div class="group-title">Typography Options</div>
+              
+              <div class="field-header">
+                <label for="text-font">Font Family</label>
+              </div>
+              <select id="text-font" class="custom-select">
+                <option value="Inter, sans-serif">Inter Sans</option>
+                <option value="Outfit, sans-serif">Outfit Display</option>
+                <option value="'Courier New', monospace">Courier Monospace</option>
+                <option value="Georgia, serif">Georgia Serif</option>
+                <option value="'Brush Script MT', cursive">Handwritten Brush</option>
+              </select>
+
+              <div class="slider-field" style="margin-top: 12px;">
+                <div class="field-header">
+                  <label for="text-size">Font Size</label>
+                  <span id="text-size-val">48px</span>
+                </div>
+                <input type="range" id="text-size" min="12" max="200" value="48">
+              </div>
+
+              <div class="field-header" style="margin-top: 12px;">
+                <label for="text-color">Color & Style</label>
+              </div>
+              <div class="color-picker-wrapper">
+                <input type="color" id="text-color" value="#ffffff" class="custom-color-input">
+                <div class="preset-colors">
+                  <span class="color-dot" style="background:#ffffff;" data-color="#ffffff"></span>
+                  <span class="color-dot" style="background:#000000;" data-color="#000000"></span>
+                  <span class="color-dot" style="background:#fbbf24;" data-color="#fbbf24"></span>
+                  <span class="color-dot" style="background:#38bdf8;" data-color="#38bdf8"></span>
+                  <span class="color-dot" style="background:#f43f5e;" data-color="#f43f5e"></span>
+                </div>
+              </div>
+
+              <div class="checkbox-row" style="margin-top: 12px;">
+                <label><input type="checkbox" id="text-bold" checked> Bold</label>
+                <label><input type="checkbox" id="text-shadow" checked> Drop Shadow</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 6: Histogram & EXIF Panel -->
+        <div class="tab-panel" id="panel-histogram">
+          <div class="panel-header">
+            <h3>Image Analytics & Metadata</h3>
+          </div>
+
+          <div class="scroll-area">
+            <!-- RGB Histogram -->
+            <div class="control-group">
+              <div class="group-title">RGB Histogram</div>
+              <div class="histogram-wrapper">
+                <canvas id="histogram-canvas" width="280" height="140"></canvas>
+              </div>
+              <div class="histogram-legend">
+                <span class="legend-item red">Red</span>
+                <span class="legend-item green">Green</span>
+                <span class="legend-item blue">Blue</span>
+                <span class="legend-item gray">Luma</span>
+              </div>
+            </div>
+
+            <!-- Image Info / EXIF -->
+            <div class="control-group">
+              <div class="group-title">File Information</div>
+              <div class="info-list" id="info-list">
+                <div class="info-row"><span class="info-key">File Name</span><span class="info-val" id="info-filename">No image loaded</span></div>
+                <div class="info-row"><span class="info-key">Dimensions</span><span class="info-val" id="info-dimensions">0 x 0 px</span></div>
+                <div class="info-row"><span class="info-key">Aspect Ratio</span><span class="info-val" id="info-aspect">1:1</span></div>
+                <div class="info-row"><span class="info-key">Megapixels</span><span class="info-val" id="info-mp">0 MP</span></div>
+                <div class="info-row"><span class="info-key">Estimated Size</span><span class="info-val" id="info-size">0 KB</span></div>
+                <div class="info-row"><span class="info-key">Color Space</span><span class="info-val">sRGB (Standard)</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span class="status-indicator" id="status-text">Ready</span>
+        <span class="dim-text" id="status-dim">No image loaded</span>
+      </div>
+      <div class="footer-right">
+        <button class="history-toggle-btn" id="history-toggle-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          History (<span id="history-count">0</span>)
+        </button>
+      </div>
+    </footer>
+
+    <!-- History Timeline Drawer -->
+    <div class="history-drawer hidden" id="history-drawer">
+      <div class="drawer-header">
+        <h4>Edit History Timeline</h4>
+        <button class="btn-circle btn-sm" id="close-history-btn">✕</button>
+      </div>
+      <div class="history-list" id="history-list">
+        <!-- Dynamic history items -->
+      </div>
+    </div>
+
+    <!-- Export Modal with Exact KB Target Size Control -->
+    <div class="modal-backdrop hidden" id="export-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Export & Compress Photo</h3>
+          <button class="btn-circle btn-sm" id="close-export-modal">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="field-group">
+            <label for="export-filename">File Name</label>
+            <input type="text" id="export-filename" class="custom-input" value="lumina_edited_photo">
+          </div>
+
+          <div class="field-group">
+            <label for="export-format">Image Format</label>
+            <div class="chip-grid">
+              <button class="chip format-chip active" data-format="image/jpeg">JPEG (Government/Passport)</button>
+              <button class="chip format-chip" data-format="image/png">PNG (Lossless)</button>
+              <button class="chip format-chip" data-format="image/webp">WebP (Modern)</button>
+            </div>
+          </div>
+
+          <!-- Strict File Size KB Target Control -->
+          <div class="field-group highlight-box">
+            <div class="checkbox-row">
+              <label style="font-weight:700; color:var(--accent-secondary);">
+                <input type="checkbox" id="enable-target-kb" checked> Enable Strict Target KB Limit (e.g. &lt; 19 KB / 50 KB / 200 KB)
+              </label>
+            </div>
+            
+            <div id="target-kb-wrapper" style="margin-top: 10px;">
+              <div class="chip-grid">
+                <button class="chip kb-chip active" data-kb="19">Under 19 KB</button>
+                <button class="chip kb-chip" data-kb="50">Under 50 KB</button>
+                <button class="chip kb-chip" data-kb="100">Under 100 KB</button>
+                <button class="chip kb-chip" data-kb="200">Under 200 KB</button>
+                <button class="chip kb-chip" data-kb="500">Under 500 KB</button>
+                <button class="chip kb-chip" data-kb="custom">Custom KB</button>
+              </div>
+
+              <div class="btn-row hidden" id="custom-kb-input-wrap" style="margin-top: 8px;">
+                <input type="number" id="custom-kb-val" class="custom-input" value="20" placeholder="Enter target limit in KB...">
+                <span style="align-self:center; font-weight:600; font-size:12px;">KB</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="slider-field" id="quality-slider-group" style="display:none;">
+            <div class="field-header">
+              <label for="export-quality">Manual Compression Quality</label>
+              <span id="export-quality-val">90%</span>
+            </div>
+            <input type="range" id="export-quality" min="10" max="100" value="90">
+          </div>
+
+          <div class="field-group">
+            <label for="export-scale">Output Scale</label>
+            <select id="export-scale" class="custom-select">
+              <option value="1">Original / Preset Dimension (100%)</option>
+              <option value="0.75">75% Scale</option>
+              <option value="0.5">50% Scale</option>
+              <option value="2">2x Upscale</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="cancel-export-btn">Cancel</button>
+          <button class="btn btn-primary btn-lg" id="download-final-btn">Compress & Download</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="js/engine/histogram.js"></script>
+  <script src="js/engine/transform.js"></script>
+  <script src="js/engine/canvas-engine.js"></script>
+  <script src="js/tools/adjustments.js"></script>
+  <script src="js/tools/filters.js"></script>
+  <script src="js/tools/crop.js"></script>
+  <script src="js/tools/annotations.js"></script>
+  <script src="js/utils/history.js"></script>
+  <script src="js/utils/export.js"></script>
+  <script src="js/utils/samples.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('SW registered:', reg.scope))
+          .catch(err => console.log('SW failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>

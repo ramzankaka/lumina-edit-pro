@@ -1,0 +1,67 @@
+/* ==========================================================================
+   Lumina Edit Pro - Responsive Viewport Adjustments
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  :root {
+    --right-panel-width: 280px;
+  }
+  
+  .brand-title {
+    font-size: 15px;
+  }
+
+  .offline-badge {
+    display: none;
+  }
+
+  .dropdown-menu {
+    right: 0;
+    left: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .workspace-body {
+    flex-direction: column;
+  }
+
+  .left-sidebar {
+    width: 100%;
+    height: 52px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding-top: 0;
+  }
+
+  .tool-nav {
+    flex-direction: row;
+    justify-content: space-around;
+    height: 100%;
+    align-items: center;
+    padding: 0 4px;
+  }
+
+  .tool-tab {
+    flex-direction: row;
+    padding: 6px 10px;
+    width: auto;
+  }
+
+  .right-sidebar {
+    width: 100%;
+    height: 240px;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .modal-card {
+    width: 90%;
+  }
+
+  .history-drawer {
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
+}
